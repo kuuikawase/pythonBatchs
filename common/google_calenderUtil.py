@@ -67,7 +67,6 @@ def read_text_calendar():
     flg = ""
     with open(SCHEDULE_PATH, mode='r', encoding="utf-8") as f:
         flg = f.read()
-    print(flg)
     if flg:
         print("true")
         schedule_lists = flg.split(":")
@@ -75,7 +74,6 @@ def read_text_calendar():
         startdate = [int(startdate[0]), int(startdate[1]), int(startdate[2]), int(startdate[3]), int(startdate[4])]
         enddate = schedule_lists[3].split(",")
         enddate = [int(enddate[0]), int(enddate[1]), int(enddate[2]), int(enddate[3]), int(enddate[4])]
-        print(startdate, enddate)
         try:
             add_calendar(schedule_lists[0], "", schedule_lists[1], startdate, enddate)
             with open(SCHEDULE_PATH, mode='w', encoding="utf-8") as f:
