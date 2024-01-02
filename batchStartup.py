@@ -13,6 +13,7 @@ from common import voicevoxUtil
 import subprocess
 import time
 import datetime
+from common import google_calenderUtil
 
 
 # async def music_excute():
@@ -40,12 +41,14 @@ import datetime
 
 def batch_list(batch_no):
     print(batch_no)
-    # 常時起動音楽再生バッチ
+    # 音楽再生バッチ
     if batch_no == 1:
         print("music")
         music.play_music()
+    # googleカレンダー予定追加バッチ
     elif batch_no == 2:
-        print("")
+        print("addSchedule")
+        google_calenderUtil.read_text_calendar()
     # 天気予報バッチ
     elif batch_no == 3:
         print("weather")
