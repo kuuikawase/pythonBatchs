@@ -59,6 +59,7 @@ def add_calendar(title, location, description, startdate, enddate):
         },
     }
     print(event)
+    voicevoxUtil.speak_voicevox("予定を追加します。")
     # 予定を追加する
     event = service.events().insert(calendarId=calendar_id, body=event).execute()
 
