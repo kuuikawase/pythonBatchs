@@ -156,11 +156,11 @@ def write_text_calendar():
     for event in formatted_events:
         if re.match(r'^\d{4}-\d{2}-\d{2}$', event[0]):
             start_date = '{0:%Y-%m-%d}\n'.format(datetime.datetime.strptime(event[1], '%Y-%m-%d'))
-            response += '{0} 終日 {1}\n\n'.format(start_date, event[2])
+            response += '{0}\n{1}\n{2}\n'.format("AllDate", start_date, event[2])
         else:
             start_time = '{0:%Y-%m-%d %H:%M}\n'.format(datetime.datetime.strptime(event[0], '%Y-%m-%dT%H:%M:%S+09:00'))
             end_time = '{0:%H:%M}'.format(datetime.datetime.strptime(event[1], '%Y-%m-%dT%H:%M:%S+09:00'))
-            response += '{0} ~ {1}\n{2}\n\n'.format(start_time, end_time, event[2])
+            response += '{0}\n{1}\n{2}\n{3}\n'.format("DateTime", start_time, end_time, event[2])
     response = response.rstrip('\n')
     print(response)
     with open(SCHEDULE_NOW_TASK_PATH, mode="w", encoding="utf-8") as f:
