@@ -3,5 +3,6 @@
   "music_play_status": "E:\\python\\mp4\\music.txt",
   "read_liten_text_path": "E:\\python\\text.txt",
   "time_path": "E:\\python\\time.txt",
-  "schedule_path" : "E:\\python\\schedule.txt"
+  "schedule_add_task_path" : "E:\\python\\scheduleAddTask.txt",
+  "schedule_now_task_path" : "E:\\python\\scheduleNowTask.txt"
 }

@@ -49,6 +49,7 @@ def batch_list(batch_no):
     elif batch_no == 2:
         print("addSchedule")
         google_calenderUtil.read_text_calendar()
+        google_calenderUtil.write_text_calendar()
     # 天気予報バッチ
     elif batch_no == 3:
         print("weather")
