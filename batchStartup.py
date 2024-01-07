@@ -49,11 +49,16 @@ def batch_list(batch_no):
     elif batch_no == 2:
         print("addSchedule")
         google_calenderUtil.read_text_calendar()
-        google_calenderUtil.write_text_calendar()
+        google_calenderUtil.get_write_text_calendar()
+        try:
+            google_calenderUtil.delete_calendar(1, 1, 1, 1)
+        except Exception as e:
+            print(e)
     # 天気予報バッチ
     elif batch_no == 3:
         print("weather")
         # read_text_execution.execution_wether()
+
 
 def hour_batch_list(batch_no):
     print(batch_no)
@@ -64,11 +69,13 @@ def hour_batch_list(batch_no):
         print(str(now_h) + "時に")
         voicevoxUtil.speak_voicevox("" + now_h + "時になりました。", 8)
 
+
 def day_batch_list(batch_no):
     print(batch_no)
     if batch_no == 1:
         print("weather")
         # read_text_execution.execution_wether()
+
 
 async def main():
     day = ""
@@ -77,7 +84,7 @@ async def main():
         # ProcessPoolExecutor の場合
         with concurrent.futures.ProcessPoolExecutor() as executor:
             # 関数に渡す引数のリスト
-            args = [1,2,3]
+            args = [1, 2, 3]
 
             # map() を使って関数を並行実行し、結果を受け取る
             print(args)

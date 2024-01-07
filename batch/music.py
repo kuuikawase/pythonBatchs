@@ -137,7 +137,6 @@ def play_music():
     read_music_status = f.read()
     f.close()
 
-    print(PLAY_STATUS_FILE)
 
     if read_music_status in RETURN_TEXT:
         return

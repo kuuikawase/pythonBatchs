@@ -9,50 +9,30 @@ from common import voicevoxUtil
 SCHEDULE_ADD_TASK_PATH = propertiesUtil.read_properties(propertiesConstants.SCHEDULE_ADD_TASK_PATH)
 SCHEDULE_NOW_TASK_PATH = propertiesUtil.read_properties(propertiesConstants.SCHEDULE_NOW_TASK_PATH)
 
-def add_calendar_datetime(title, location, description, startdate, enddate):
-    # 編集スコープの設定(今回は読み書き両方OKの設定)
+
+def calender_api_preparation():
     SCOPES = ['https://www.googleapis.com/auth/calendar']
-    # カレンダーIDの設定(基本的には自身のgmailのアドレス)
     calendar_id = 'kawase0987@gmail.com'
 
-    # 認証ファイルを使用して認証用オブジェクトを作成
     gapi_creds = google.auth.load_credentials_from_file(
         'credentials.json', SCOPES)[0]
 
-    # 認証用オブジェクトを使用してAPIを呼び出すためのオブジェクト作成
     service = googleapiclient.discovery.build(
         'calendar', 'v3', credentials=gapi_creds)
+    return service, calendar_id
 
-    # # 追加するスケジュールの情報を設定
-    # event = {
-    #     # 予定のタイトル
-    #     'summary': 'テスト！',
-    #     'location': 'ここ',
-    #     'description': 'テスト詳細',
-    #     # 予定の開始時刻(ISOフォーマットで指定)
-    #     'start': {
-    #         'dateTime': datetime.datetime(2023, 3, 14, 0, 00).isoformat(),
-    #         'timeZone': 'Japan'
-    #     },
-    #     # 予定の終了時刻(ISOフォーマットで指定)
-    #     'end': {
-    #         'dateTime': datetime.datetime(2023, 3, 14, 17, 59).isoformat(),
-    #         'timeZone': 'Japan'
-    #     },
-    # }
-    # 追加するスケジュールの情報を設定
+
+def add_calendar_datetime(title, location, description, startdate, enddate):
+    service, calendar_id = calender_api_preparation()
     event = {
-        # 予定のタイトル
         'summary': title,
         'location': location,
         'description': description,
-        # 予定の開始時刻(ISOフォーマットで指定)
         'start': {
             'dateTime': datetime.datetime(startdate[0], startdate[1], startdate[2], startdate[3],
                                           startdate[4]).isoformat(),
             'timeZone': 'Japan'
         },
-        # 予定の終了時刻(ISOフォーマットで指定)
         'end': {
             'dateTime': datetime.datetime(enddate[0], enddate[1], enddate[2], enddate[3], enddate[4]).isoformat(),
             'timeZone': 'Japan'
@@ -60,43 +40,26 @@ def add_calendar_datetime(title, location, description, startdate, enddate):
     }
     print(event)
     voicevoxUtil.speak_voicevox("予定を追加します。", 8)
-    # 予定を追加する
     event = service.events().insert(calendarId=calendar_id, body=event).execute()
 
+
 def add_calendar_date(title, location, description, startdate, enddate):
-    # 編集スコープの設定(今回は読み書き両方OKの設定)
-    SCOPES = ['https://www.googleapis.com/auth/calendar']
-    # カレンダーIDの設定(基本的には自身のgmailのアドレス)
-    calendar_id = 'kawase0987@gmail.com'
-
-    # 認証ファイルを使用して認証用オブジェクトを作成
-    gapi_creds = google.auth.load_credentials_from_file(
-        'credentials.json', SCOPES)[0]
-
-    # 認証用オブジェクトを使用してAPIを呼び出すためのオブジェクト作成
-    service = googleapiclient.discovery.build(
-        'calendar', 'v3', credentials=gapi_creds)
-
-    # 追加するスケジュールの情報を設定
+    service, calendar_id = calender_api_preparation()
     event = {
-        # 予定のタイトル
         'summary': title,
         'location': location,
         'description': description,
-        # 予定の開始時刻(ISOフォーマットで指定)
         'start': {
             'date': '{}-{}-{}'.format(startdate[0], startdate[1], startdate[2]),
             'timeZone': 'Japan'
         },
-        # 予定の終了時刻(ISOフォーマットで指定)
         'end': {
             'date': '{}-{}-{}'.format(enddate[0], enddate[1], enddate[2]),
             'timeZone': 'Japan'
         },
     }
     print(event)
-    voicevoxUtil.speak_voicevox("予定を追加します。", 8)
-    # 予定を追加する
+    voicevoxUtil.speak_voicevox("終日で予定を追加します。", 8)
     event = service.events().insert(calendarId=calendar_id, body=event).execute()
 
 
@@ -121,38 +84,22 @@ def read_text_calendar():
         except Exception as e:
             print(e)
 
-def write_text_calendar():
-    SCOPES = ['https://www.googleapis.com/auth/calendar']
-    # カレンダーIDの設定(基本的には自身のgmailのアドレス)
-    calendar_id = 'kawase0987@gmail.com'
 
-    # Googleの認証情報をファイルから読み込む
-    gapi_creds = google.auth.load_credentials_from_file(
-        'credentials.json', SCOPES)[0]
+def get_write_text_calendar():
+    service, calendar_id = calender_api_preparation()
 
-    # 認証用オブジェクトを使用してAPIを呼び出すためのオブジェクト作成
-    service = googleapiclient.discovery.build(
-        'calendar', 'v3', credentials=gapi_creds)
-
-    # ②Googleカレンダーからイベントを取得する
-    # 現在時刻を世界協定時刻（UTC）のISOフォーマットで取得する
     now = datetime.datetime.utcnow().isoformat() + 'Z'
-    # 直近3件のイベントを取得する
     event_list = service.events().list(
         calendarId=calendar_id, timeMin=now,
         maxResults=200, singleEvents=True,
         orderBy='startTime').execute()
-
-    # ③イベントの開始時刻、終了時刻、概要を取得する
+    print(event_list)
     events = event_list.get('items', [])
-    print(events)
     formatted_events = [(event['start'].get('dateTime', event['start'].get('date')),  # start time or day
                          event['end'].get('dateTime', event['end'].get('date')),  # end time or day
                          event['summary']) for event in events]
 
-    # ④出力テキストを生成する
     response = ''
-    # データの正規化をする
     for event in formatted_events:
         if re.match(r'^\d{4}-\d{2}-\d{2}$', event[0]):
             start_date = '{0:%Y-%m-%d}\n'.format(datetime.datetime.strptime(event[1], '%Y-%m-%d'))
@@ -166,5 +113,25 @@ def write_text_calendar():
     with open(SCHEDULE_NOW_TASK_PATH, mode="w", encoding="utf-8") as f:
         f.write(response)
 
-if __name__ == "__main__":
-    write_text_calendar()
+
+def delete_calendar(start, end, summary, description):
+    service, calendar_id = calender_api_preparation()
+
+    now = datetime.datetime.utcnow().isoformat() + 'Z'
+
+    event_list = service.events().list(
+        calendarId=calendar_id, timeMin=now,
+        maxResults=200, singleEvents=True,
+        orderBy='startTime').execute()
+
+    events = event_list.get('items', [])
+    delete_list = []
+    # 2024-01-11T00:00:00+09:00
+    # 2024-01-12T23:59:00+09:00
+    for event_item in events:
+        if (event_item['start'].get('dateTime', event_item['start'].get('date')) == start
+                and event_item['end'].get('dateTime', event_item['end'].get('date')) == end
+                and event_item['summary'] == summary and event_item['description'] == description):
+            event_id = event_item['id']
+            service.events().delete(calendarId=calendar_id, eventId=event_id).execute()
+            print("削除" + event_item['id'])

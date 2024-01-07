@@ -1,6 +1,6 @@
 {
-  "music_folder": "E:\\python\\mp4",
-  "music_play_status": "E:\\python\\mp4\\music.txt",
+  "music_folder": "E:\\python\\music",
+  "music_play_status": "E:\\python\\music.txt",
   "read_liten_text_path": "E:\\python\\text.txt",
   "time_path": "E:\\python\\time.txt",
   "schedule_add_task_path" : "E:\\python\\scheduleAddTask.txt",
