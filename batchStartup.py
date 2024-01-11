@@ -49,11 +49,14 @@ def batch_list(batch_no):
     elif batch_no == 2:
         print("addSchedule")
         google_calenderUtil.read_text_calendar()
-        google_calenderUtil.get_write_text_calendar()
         try:
-            google_calenderUtil.delete_calendar(1, 1, 1, 1)
+            google_calenderUtil.get_write_text_calendar()
         except Exception as e:
             print(e)
+        # try:
+        #     google_calenderUtil.delete_calendar(1, 1, 1, 1)
+        # except Exception as e:
+        #     print(e)
     # 天気予報バッチ
     elif batch_no == 3:
         print("weather")
@@ -123,3 +126,4 @@ async def main():
 
 if __name__ == '__main__':
     asyncio.run(main())
+    # google_calenderUtil.get_write_text_calendar()

@@ -97,18 +97,20 @@ def get_write_text_calendar():
     events = event_list.get('items', [])
     formatted_events = [(event['start'].get('dateTime', event['start'].get('date')),  # start time or day
                          event['end'].get('dateTime', event['end'].get('date')),  # end time or day
-                         event['summary']) for event in events]
+                         event['summary'], event.get('dateTime', 'NoData')) for event in events]
 
     response = ''
     for event in formatted_events:
         if re.match(r'^\d{4}-\d{2}-\d{2}$', event[0]):
-            start_date = '{0:%Y-%m-%d}\n'.format(datetime.datetime.strptime(event[1], '%Y-%m-%d'))
-            response += '{0}\n{1}\n{2}\n'.format("AllDate", start_date, event[2])
+            start_date = '{0:%Y-%m-%d}'.format(datetime.datetime.strptime(event[0], '%Y-%m-%d'))
+            end_date = '{0:%Y-%m-%d}'.format(datetime.datetime.strptime(event[1], '%Y-%m-%d'))
+            response += '{0}|||{1}|||{2}|||{3}|||{4}\n'.format("AllDate", start_date, end_date, event[2], event[3])
         else:
-            start_time = '{0:%Y-%m-%d %H:%M}\n'.format(datetime.datetime.strptime(event[0], '%Y-%m-%dT%H:%M:%S+09:00'))
-            end_time = '{0:%H:%M}'.format(datetime.datetime.strptime(event[1], '%Y-%m-%dT%H:%M:%S+09:00'))
-            response += '{0}\n{1}\n{2}\n{3}\n'.format("DateTime", start_time, end_time, event[2])
+            start_time = '{0:%Y-%m-%d %H:%M}'.format(datetime.datetime.strptime(event[0], '%Y-%m-%dT%H:%M:%S+09:00'))
+            end_time = '{0:%Y-%m-%d 0:%H:%M}'.format(datetime.datetime.strptime(event[1], '%Y-%m-%dT%H:%M:%S+09:00'))
+            response += '{0}|||{1}|||{2}|||{3}|||{4}\n'.format("DateTime", start_time, end_time, event[2], event[3])
     response = response.rstrip('\n')
+    print("response")
     print(response)
     with open(SCHEDULE_NOW_TASK_PATH, mode="w", encoding="utf-8") as f:
         f.write(response)
@@ -128,10 +130,10 @@ def delete_calendar(start, end, summary, description):
     delete_list = []
     # 2024-01-11T00:00:00+09:00
     # 2024-01-12T23:59:00+09:00
-    for event_item in events:
-        if (event_item['start'].get('dateTime', event_item['start'].get('date')) == start
-                and event_item['end'].get('dateTime', event_item['end'].get('date')) == end
-                and event_item['summary'] == summary and event_item['description'] == description):
-            event_id = event_item['id']
-            service.events().delete(calendarId=calendar_id, eventId=event_id).execute()
-            print("削除" + event_item['id'])
+    # for event_item in events:
+    #     if (event_item['start'].get('dateTime', event_item['start'].get('date')) == start
+    #             and event_item['end'].get('dateTime', event_item['end'].get('date')) == end
+    #             and event_item['summary'] == summary and event_item['description'] == description):
+    #         event_id = event_item['id']
+    #         service.events().delete(calendarId=calendar_id, eventId=event_id).execute()
+    #         print("削除" + event_item['id'])

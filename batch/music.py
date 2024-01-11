@@ -10,6 +10,8 @@ import wave
 import pyaudio
 import time
 import ffmpeg
+from pydub import AudioSegment
+from pydub.utils import make_chunks
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from common import globUtil
@@ -144,46 +146,68 @@ def play_music():
     f = open(PLAY_STATUS_FILE, "r", encoding="utf-8")
     read_music_status = f.read()
     f.close()
+    wave_flg = False
+    mp3_flg = False
     # 再生ファイル読み込み
     try:
-        wf = wave.open(read_music_status, "rb")
+        music_stream = wave.open(read_music_status, "rb")
+        wave_flg = True
     except Exception as e:
-        print("実行失敗")
-        print(e)
-        return
+        try:
+            music_stream = AudioSegment.from_mp3(read_music_status)
+            mp3_flg = True
+        except Exception as e:
+            print("実行失敗")
+            print(e)
+            return
 
     with open(PLAY_STATUS_FILE, mode='w', encoding="utf-8") as f:
         f.write("now")
 
     voicevoxUtil.speak_voicevox("音楽を再生します。", 8)
-    wf = wave.open(read_music_status, "rb")
 
     p = pyaudio.PyAudio()
 
-    def callback(in_data, frame_count, time_info, status):
-        data = wf.readframes(frame_count)
-        return data, pyaudio.paContinue
+    # waveファイルの場合
+    if wave_flg:
+        def callback(in_data, frame_count, time_info, status):
+            data = music_stream.readframes(frame_count)
+            return data, pyaudio.paContinue
 
-    stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
-                    channels=wf.getnchannels(),
-                    rate=wf.getframerate(),
-                    output=True,
-                    stream_callback=callback)
+        stream = p.open(format=p.get_format_from_width(music_stream.getsampwidth()),
+                        channels=music_stream.getnchannels(),
+                        rate=music_stream.getframerate(),
+                        output=True,
+                        stream_callback=callback)
 
-    stream.start_stream()
+        stream.start_stream()
+        while stream.is_active():
+            print("stream")
+            time.sleep(0.1)
 
-    while stream.is_active():
-        time.sleep(0.1)
+            f = open(PLAY_STATUS_FILE, "r", encoding="utf-8")
+            music = f.read()
+            f.close()
+            if music != "now":
+                break
 
-        f = open(PLAY_STATUS_FILE, "r", encoding="utf-8")
-        music = f.read()
-        f.close()
-        if music != "now":
-            break
+        stream.stop_stream()
+    # mp3ファイルの場合
+    else:
+        stream = p.open(format=p.get_format_from_width(music_stream.sample_width),
+                        channels=music_stream.channels,
+                        rate=music_stream.frame_rate,
+                        output=True)
+        for chunk in make_chunks(music_stream, 500):
+            stream.write(chunk._data)
+            f = open(PLAY_STATUS_FILE, "r", encoding="utf-8")
+            music = f.read()
+            f.close()
+            if music != "now":
+                break
 
-    stream.stop_stream()
     stream.close()
-    wf.close()
+    music_stream.close()
 
     f = open(PLAY_STATUS_FILE, "r", encoding="utf-8")
     music = f.read()
