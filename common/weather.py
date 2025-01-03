@@ -3,6 +3,7 @@ import requests
 from datetime import datetime
 import pandas as pd
 
+# https://qiita.com/michan06/items/48503631dd30275288f7
 # 例　city:"石川県"
 def weather(city):
     # 天気辞書
@@ -10,11 +11,12 @@ def weather(city):
 
     wc_dict = {k:v[3] for k, v in TELOPS.items()}
 
-
+    # 県内の観測所コード取得
     url = "http://www.jma.go.jp/bosai/common/const/area.json"
     with requests.get(url) as response:
         area = response.json()
 
+    # 観測所より、今日～一週間後 00:00
     pref_code = [k for k, v in area["offices"].items() if v["name"] == city][0]
     url = f"https://www.jma.go.jp/bosai/forecast/data/forecast/{pref_code}.json"
     with requests.get(url) as response:
@@ -32,7 +34,8 @@ def weather(city):
     # pd.DataFrame({"weather": weather, "reliabilities": reliabilities, "pops": pops},
     #              index=valid)
     return weather, valid
-# print(weather("石川県"))
+
+# print(weather("埼玉県"))
 # print(valid)
 # print(weather)
 # for i in range(0, len(valid)):

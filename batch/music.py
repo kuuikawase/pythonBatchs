@@ -182,7 +182,6 @@ def play_music():
 
         stream.start_stream()
         while stream.is_active():
-            print("stream")
             time.sleep(0.1)
 
             f = open(PLAY_STATUS_FILE, "r", encoding="utf-8")

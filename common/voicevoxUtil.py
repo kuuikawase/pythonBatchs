@@ -3,6 +3,7 @@ import json  # APIで取得するJSONデータを処理する
 import pyaudio  # wavファイルを再生する
 import time  # タイムラグをつける
 import win32clipboard as w32c
+import subprocess
 
 
 def speak_voicevox(text, speaker_no):
@@ -40,5 +41,11 @@ def speak_voicevox(text, speaker_no):
     p.terminate()
 
 
-# speakvoicevox(
-#    "得意なことはしゃべることです。なまむぎなまごめなまたまごwavファイルを作らずに直接音声を出力することもできます。pythonでwavファイルを出力するにはpyaudioを使います。")
+if __name__ == '__main__':
+    # result = subprocess.Popen(r"C:\Program Files\VOICEVOX\VOICEVOX.exe")
+    # print("result")
+    # time.sleep(10)
+    print("result")
+    speak_voicevox(
+        "得意なことはしゃべることです。なまむぎなまごめなまたまごwavファイルを作らずに直接音声を出力することもできます。pythonでwavファイルを出力するにはpyaudioを使います。",
+        8);

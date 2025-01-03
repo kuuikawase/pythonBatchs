@@ -2,6 +2,7 @@ import glob
 
 
 # フォルダ内ファイル検索
+# 正規表現
 
 # path：対象フォルダパス
 # extension：対象拡張子

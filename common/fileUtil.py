@@ -1,6 +1,7 @@
 import shutil
 
-
+# https://qiita.com/flcn-x/items/e10fc4c4f3ddc404bc7a
+# 参照
 # old_file_path ファイルパス
 # new_path 移動先パス
 def move_file(old_file_path, new_path):

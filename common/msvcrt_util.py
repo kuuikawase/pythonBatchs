@@ -1,5 +1,6 @@
 import msvcrt
 
+# キーボード入力対応
 
 # key：qなど一文字
 def break_key(key):
